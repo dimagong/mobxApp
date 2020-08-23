@@ -1,12 +1,29 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { observable } from 'mobx'
+import { observer } from 'mobx-react'
+
+@observer class Counter extends Component {
+
+  @observable count = 0;
+  hendleIncrement = () => { this.count++ }
+
+  render() {
+    return (
+      <div className="App" >
+        <h1>{this.count}</h1>
+        <button>+1</button>
+        <button>-1</button>
+      </div>
+    );
+  }
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Counter />
   </React.StrictMode>,
   document.getElementById('root')
 );
