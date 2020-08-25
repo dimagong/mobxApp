@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import { observable, computed, extendObservable } from 'mobx'
+import { observable, computed, configure, action } from 'mobx'
 import { observer } from 'mobx-react'
 
-
+configure({ enforceActions: 'observed' });
 const nickName = observable({
   ferstName: 'Tom',
   age: 30,
@@ -18,42 +18,22 @@ const nickName = observable({
   },
   decrement() {
     this.age--
-  }
-})
+  },
+},
+  {
+    increment: action,
+    decrement: action,
+  });
 
 const todos = observable([
   { text: 'Hello' },
   { text: 'Hello React' },
   { text: 'Hello Mobx' }
 ])
-// class UserNickName {
 
-//   constructor() {
-//     extendObservable(this, {
-//       ferstName: 'Tom',
-//       age: 30
-//     })
-//   }
-//   // @observable ferstName = 'Tom';
-//   // @observable age = 30;
-
-//   @computed get nickName() {
-//     console.log('Generate nickName')
-//     return `${this.ferstName}${this.age}`;
-//   }
-// }
-
-// nickName.increment = function () {
-//   this.age++
-// }
-
-// nickName.decrement = function () {
-//   this.age--
-// }
 
 @observer class Counter extends Component {
 
-  // @observable count = 0;
   hendleIncrement = () => { this.props.store.increment() }
   hendleDecrement = () => { this.props.store.decrement() }
 
@@ -82,7 +62,6 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-// todos.push({ text: 'React Super' })
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
