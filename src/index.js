@@ -21,8 +21,11 @@ const nickName = observable({
   },
 },
   {
-    increment: action,
-    decrement: action,
+    increment: action('Plus one'),
+    decrement: action('Minus one'),
+  },
+  {
+    name: "nickNameObservable"
   });
 
 const todos = observable([
