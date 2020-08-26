@@ -2,65 +2,38 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
+import App from './App';
+
 import { observable, computed, configure, action } from 'mobx'
 import { observer } from 'mobx-react'
 
 configure({ enforceActions: 'observed' });
-const nickName = observable({
-  ferstName: 'Tom',
-  age: 30,
-  get nickName() {
-    console.log('Generate nickName')
-    return `${this.ferstName}${this.age}`
+
+
+const changeData = observable({
+  data: [
+    { name: 'JACK', sp: 12 },
+    { name: 'MAX', sp: 10 },
+    { name: 'LEO', sp: 8 }
+  ],
+  clearData() {
+    this.data = [{ name: 'NONE', sp: 0 }]
   },
-  increment() {
-    this.age++
-  },
-  decrement() {
-    this.age--
+  addData() {
+    let new_name = prompt('Please, enter name', 'NAME');
+    let new_sp = prompt('Please, enter sp', 'SP');
+    this.data.push({ name: new_name, sp: +new_sp })
   },
 },
   {
-    increment: action('Plus one'),
-    decrement: action('Minus one'),
+    clearData: action('Clear'),
+    addData: action('addData')
   },
-  {
-    name: "nickNameObservable"
-  });
-
-const todos = observable([
-  { text: 'Hello' },
-  { text: 'Hello React' },
-  { text: 'Hello Mobx' }
-])
-
-
-@observer class Counter extends Component {
-
-  hendleIncrement = () => { this.props.store.increment() }
-  hendleDecrement = () => { this.props.store.decrement() }
-
-  render() {
-    return (
-      <div className="App" >
-        <h1>{this.props.store.nickName}</h1>
-        <h1>{this.props.store.age}</h1>
-        <button onClick={this.hendleIncrement}>+1</button>
-        <button onClick={this.hendleDecrement}>-1</button>
-
-        <ul>
-          {todos.map(({ text }) => {
-            return <li key={text}>{text}</li>
-          })}
-        </ul>
-      </div>
-    );
-  }
-}
+)
 
 ReactDOM.render(
   <React.StrictMode>
-    <Counter store={nickName} />
+    <App changeData={changeData} />
   </React.StrictMode>,
   document.getElementById('root')
 );
