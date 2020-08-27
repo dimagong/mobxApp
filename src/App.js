@@ -1,6 +1,7 @@
 import React from 'react';
-import { observer } from 'mobx-react'
+import { observer, inject } from "mobx-react";
 import { observable } from 'mobx'
+
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
@@ -9,6 +10,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import TextField from '@material-ui/core/TextField';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -48,17 +54,36 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const App = observer(({ changeData }) => {
+const App = inject("changeData")(observer(({ changeData }) => {
+
 
     const classes = useStyles();
 
 
+    //console.log('changeData', changeData.data[0].name)
     const basaSp = changeData.data.map(el => el.sp)
     const maxData = Math.max(...basaSp)
     const perform = changeData.data.filter(el => el.sp === maxData);
-    const name_perform = perform[0].name
 
-    const sum = basaSp.reduce((a, b) => a + b)
+    let name_perform, sum;
+    if (changeData.data.length) {
+        name_perform = perform[0].name
+        sum = basaSp.reduce((a, b) => a + b)
+    } else {
+        name_perform = ''
+        sum = 0
+    }
+
+
+    const changeInput = (e) => {
+        changeData.searchData(e.target.value)
+        const reg = new RegExp(changeData.dataInputSearch)
+        const findName = changeData.data.filter(el => reg.test(el.name));
+        if (findName.length && changeData.dataInputSearch) {
+            changeData.upData(findName[0])
+        }
+    }
+
 
 
     return (
@@ -67,7 +92,7 @@ const App = observer(({ changeData }) => {
             <Container maxWidth="md" className={classes.root}>
                 <Typography className={classes.header}>SPRINT BOARD</Typography>
                 <Grid container spacing={3}>
-                    <Grid item xs={6}>
+                    <Grid item xs={4} >
                         <Button
                             variant="contained"
                             onClick={() => changeData.clearData()}
@@ -75,7 +100,19 @@ const App = observer(({ changeData }) => {
                             Clear Table
                         </Button>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
+                        <InputLabel htmlFor="input-with-icon-adornment">With a start adornment</InputLabel>
+                        <Input
+                            onChange={changeInput}
+                            id="input-with-icon-adornment"
+                            startAdornment={
+                                <InputAdornment position="start">
+                                    <AccountCircle />
+                                </InputAdornment>
+                            }
+                        />
+                    </Grid>
+                    <Grid item xs={4} style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
                         <Button
                             variant="contained"
                             color="secondary"
@@ -91,7 +128,7 @@ const App = observer(({ changeData }) => {
                         <Paper className={classes.paper}>SP:</Paper>
                     </Grid>
                     {
-                        changeData.data.map(el => {
+                        changeData.data.length ? changeData.data.map(el => {
                             return (
                                 <Grid key={el.name} container spacing={3} className={classes.container__tab}>
                                     <Grid item xs={6} >
@@ -103,6 +140,8 @@ const App = observer(({ changeData }) => {
                                 </Grid>
                             )
                         })
+                            :
+                            ''
                     }
                     <Grid item xs={6} className={classes.title}>
                         <Typography className={classes.subtitle}>TEAM SP:</Typography>
@@ -123,5 +162,5 @@ const App = observer(({ changeData }) => {
     );
 }
 )
-
+)
 export default App;

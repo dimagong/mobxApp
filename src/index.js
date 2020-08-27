@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from "mobx-react";
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import App from './App';
+import Container from './container'
 
-import { observable, computed, configure, action } from 'mobx'
+import { observable, computed, configure, action, decorate } from 'mobx'
 import { observer } from 'mobx-react'
 
 configure({ enforceActions: 'observed' });
 
+// const item = { name: 'JACK', sp: 12 }
 
 const changeData = observable({
   data: [
@@ -16,24 +19,37 @@ const changeData = observable({
     { name: 'MAX', sp: 10 },
     { name: 'LEO', sp: 8 }
   ],
+  dataInputSearch: '',
   clearData() {
-    this.data = [{ name: 'NONE', sp: 0 }]
+    this.data = []
   },
   addData() {
     let new_name = prompt('Please, enter name', 'NAME');
     let new_sp = prompt('Please, enter sp', 'SP');
     this.data.push({ name: new_name, sp: +new_sp })
   },
+  searchData(el) {
+    this.dataInputSearch = el
+  },
+  upData(el) {
+    this.data = [el]
+  },
 },
+
   {
     clearData: action('Clear'),
-    addData: action('addData')
+    addData: action('addData'),
+    searchData: action('searchData'),
+    upData: action('upData'),
   },
 )
 
 ReactDOM.render(
   <React.StrictMode>
-    <App changeData={changeData} />
+    <Provider changeData={changeData}>
+      <App />
+      <Container />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
